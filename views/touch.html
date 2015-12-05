@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <script src="scripts/location.js"></script>
+</head>
+<body style="text-align:center;">
+	<div style="padding-top:200px">
+        <img src="graphics/ic_launcher_xx.png" height="300" width="300"/><br/>
+         <img src="graphics/Loading.gif" width="300"/>
+    </div>
+    <form id="frmLocation" name="frmLocation" method="POST" action="/pindrop">
+         <input type="hidden" name="lat" id="lat" />
+         <input type="hidden" name="lng" id="lng" />
+         <input type="hidden" name="serial" id="serial" />
+         <input type="hidden" name="usrdt" id="usrdt" />
+         <input type="hidden" name="err" id="err" />
+    </form>
+</body>
+</html>
