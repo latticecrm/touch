@@ -21,7 +21,6 @@ var bodyParser = require("body-parser");
 var _= require("underscore");
 var awsIot = require('aws-iot-device-sdk');
 
-
 //local modules
 var index_page = require('./com/views/index.js');
 var undermaintenance_page = require('./com/views/undermaintenance.js');
@@ -36,16 +35,26 @@ var PORT = process.env.PORT || 3000;
 /*-----USES-----*/
 //page level use declarations
 app.use(bodyParser.json()); //body-parser 
-app.use(express.static(__dirname + '/views')); //Store all HTML files in view folder.
-app.use(express.static(__dirname + '/views/scripts')); //Store all JS and CSS in script folder.
+app.use(express.static(__dirname + '/com')); //Store all HTML files in view folder.
+app.use(express.static(__dirname + '/com/views')); //Store all HTML files in view folder.
+app.use(express.static(__dirname + '/com/services')); //Store all JS and CSS in script folder.
 app.use(express.static(__dirname + '/awsCerts')); //AWS Certificates.
+
+/**-----CONNECT TO AWS IOT-----**/
+var device = awsIot.device({
+	   keyPath: './awsCerts/thing-private-key.pem',
+	  certPath: './awsCerts/cert.pem',
+	    caPath: './awsCerts/rootCA.pem',
+	  clientId: 'AppamarkTouch',
+	    region: 'us-east-1'
+	});
 
 /*-----REQUESTS, RESPONSES AND FUNCTIONS-----*/
 //ROOT - GET METHOD
 app.get('/:serial', function (req, res) {
 	
 	//open index page, this page will collect the location details and call pindrop
-	res.send(index_page(req.params.serial));
+	res.send(index_page(req));
 });
 
 
@@ -66,13 +75,11 @@ app.get('/pindrop/:lat/:lng/:serial/:usrdt/:err', function (req, res) {
 	vTagAccess.msg = req.params.err;
 
 	//Asyncronized call to push Tag Access to AWS IOT
-	var awsiotResponse = awsiot_service(vTagAccess);
-
-	//console.log(awsiotResponse);
+	var awsiotResponse = awsiot_service(device, vTagAccess);
 
 	//asyncronized call to pull customer URL based on serial number
 
-	vCustomerURL = "http://www.appamark.com"; //Assign the customer url here...
+	vCustomerURL = "http://www.google.com"; //Assign the customer url here...
 
 	//response redirect to the customers URL
 	res.send(vCustomerURL);
