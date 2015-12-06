@@ -19,7 +19,7 @@ Version | When | Who | What :
 var express = require("express");
 var bodyParser = require("body-parser");
 var _= require("underscore");
-//var awsIot = require('aws-iot-device-sdk');
+var awsIot = require('aws-iot-device-sdk');
 
 
 //local modules
