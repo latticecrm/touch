@@ -143,3 +143,5 @@ if (navigator.geolocation) {
     callAppaPindropService(0, 0, "Not Supported");
     
 }
+
+alert("this is working!!!");
