@@ -1,0 +1,25 @@
+https://appatouch.herokuapp.com/
+https://git.heroku.com/appatouch.git
+
+git remote add origin https://github.com/subhash-appamark/appatouch.git
+git push -u origin master
+
+
+----deploying to AWS beanstalk-----
+git add server.js
+git commit -m "my third check-in"
+eb deploy
+
+---to deploy to prod env---
+1. Commit your changes.
+git add .
+git commit -m "final checkin"
+
+2.Create a branch and switch to it.
+git checkout -b prodenv
+eb use prod
+
+When prompted, type your new environment name, and accept all settings from your previous environment.
+When you are ready, deploy your new application version to Elastic Beanstalk.
+
+eb deploy

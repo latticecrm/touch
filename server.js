@@ -3,10 +3,11 @@
 Company: Appamark Touch 
 File: server.js
 Description: 
-NodeJS Start Point Server.  
+NodeJS Starting Point Server.  
 Hosts URL Service information.  
 Appamark Touch products main landing file.
 Web page/service configurations are done here. 
+FYI -- appatouch is deployed to AWS Beanstalk and Heroku
 ---------------------------------------------------------------------------------------------------------------------------------------------
 
 -------------Update Log----------------------------------------------------------------------------------------------------------------------
@@ -36,9 +37,6 @@ var PORT = process.env.PORT || 3000;
 //page level use declarations
 app.use(bodyParser.json()); //body-parser 
 app.use(express.static(__dirname + '/views')); //Store all HTML files in view folder.
-app.use(express.static(__dirname + '/com')); //Store all HTML files in view folder.
-app.use(express.static(__dirname + '/com/views')); //Store all HTML files in view folder.
-app.use(express.static(__dirname + '/com/services')); //Store all JS and CSS in script folder.
 app.use(express.static(__dirname + '/awsCerts')); //AWS Certificates.
 
 /**-----CONNECT TO AWS IOT-----**/
