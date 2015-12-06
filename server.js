@@ -21,7 +21,6 @@ var bodyParser = require("body-parser");
 var _= require("underscore");
 var awsIot = require('aws-iot-device-sdk');
 
-
 //local modules
 var index_page = require('./com/views/index.js');
 var undermaintenance_page = require('./com/views/undermaintenance.js');
@@ -39,6 +38,15 @@ app.use(bodyParser.json()); //body-parser
 app.use(express.static(__dirname + '/views')); //Store all HTML files in view folder.
 app.use(express.static(__dirname + '/views/scripts')); //Store all JS and CSS in script folder.
 app.use(express.static(__dirname + '/awsCerts')); //AWS Certificates.
+
+/**-----CONNECT TO AWS IOT-----**/
+var device = awsIot.device({
+	   keyPath: './awsCerts/thing-private-key.pem',
+	  certPath: './awsCerts/cert.pem',
+	    caPath: './awsCerts/rootCA.pem',
+	  clientId: 'AppamarkTouch',
+	    region: 'us-east-1'
+	});
 
 /*-----REQUESTS, RESPONSES AND FUNCTIONS-----*/
 //ROOT - GET METHOD
@@ -66,9 +74,7 @@ app.get('/pindrop/:lat/:lng/:serial/:usrdt/:err', function (req, res) {
 	vTagAccess.msg = req.params.err;
 
 	//Asyncronized call to push Tag Access to AWS IOT
-	var awsiotResponse = awsiot_service(vTagAccess);
-
-	//console.log(awsiotResponse);
+	var awsiotResponse = awsiot_service(device, vTagAccess);
 
 	//asyncronized call to pull customer URL based on serial number
 
