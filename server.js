@@ -19,11 +19,14 @@ Version | When | Who | What :
 var express = require("express");
 var bodyParser = require("body-parser");
 var _= require("underscore");
+var awsIot = require('aws-iot-device-sdk');
+
 
 //local modules
 var index_page = require('./com/views/index.js');
 var undermaintenance_page = require('./com/views/undermaintenance.js');
 var awsiot_service = require('./com/services/awsiot.js');
+
 
 /*-----DECLARATIONS-----*/
 //Application Variables 
@@ -35,6 +38,7 @@ var PORT = process.env.PORT || 3000;
 app.use(bodyParser.json()); //body-parser 
 app.use(express.static(__dirname + '/views')); //Store all HTML files in view folder.
 app.use(express.static(__dirname + '/views/scripts')); //Store all JS and CSS in script folder.
+app.use(express.static(__dirname + '/awsCerts')); //AWS Certificates.
 
 /*-----REQUESTS, RESPONSES AND FUNCTIONS-----*/
 //ROOT - GET METHOD
@@ -62,7 +66,9 @@ app.get('/pindrop/:lat/:lng/:serial/:usrdt/:err', function (req, res) {
 	vTagAccess.err = req.params.err;
 
 	//Asyncronized call to push Tag Access to AWS IOT
+	var awsiotResponse = awsiot_service(vTagAccess);
 
+	console.log(awsiotResponse);
 
 	//asyncronized call to pull customer URL based on serial number
 
