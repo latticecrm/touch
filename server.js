@@ -35,6 +35,7 @@ var PORT = process.env.PORT || 3000;
 /*-----USES-----*/
 //page level use declarations
 app.use(bodyParser.json()); //body-parser 
+app.use(express.static(__dirname + '/views')); //Store all HTML files in view folder.
 app.use(express.static(__dirname + '/com')); //Store all HTML files in view folder.
 app.use(express.static(__dirname + '/com/views')); //Store all HTML files in view folder.
 app.use(express.static(__dirname + '/com/services')); //Store all JS and CSS in script folder.
@@ -54,7 +55,9 @@ var device = awsIot.device({
 app.get('/:serial', function (req, res) {
 	
 	//open index page, this page will collect the location details and call pindrop
-	res.send(index_page(req));
+	//res.send(index_page(req));
+	/////res.render("touch.html");
+	res.sendFile(__dirname + '/views/touch.html');
 });
 
 
