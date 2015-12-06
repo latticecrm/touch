@@ -19,7 +19,6 @@ function getLocation() {
 
 function callAppaUndermaintenanceService(errorcode, err) {
     /** HANDLE ERROR OR EXCEPTION HERE **/
-    alert("Calling under maintenance");
     window.location.href = "undermaintenance/" + errorcode + "/" + err;
 }
 
@@ -31,7 +30,7 @@ function callAppaPindropService(lat, lng, err) {
     try {
         var http = new XMLHttpRequest();
 
-        var appaServiceURL = "http://localhost:3000/pindrop/"; //Pindrop URL
+        var appaServiceURL = window.location.protocol + "//" + window.location.host + "/pindrop/"; //Pindrop URL
         var serial = getQueryParamValue2(); //Get serial number from index URL
         var usrdt = getCurrentDateTime(); //Get current date time
         
@@ -49,7 +48,6 @@ function callAppaPindropService(lat, lng, err) {
             }
             
         }
-        alert("Calling http send " + serial);
         //send request
         http.send();
     }
@@ -137,10 +135,8 @@ function showLocation(position) {
 
 if (navigator.geolocation) {
     //Get the user location.
-    alert("Location enabled!!!");
     getLocation();
 } else {
-    alert("Location not enabled!!!");
     //call Appamark Service Touch Service
     callAppaPindropService(0, 0, "Not Supported");
     
