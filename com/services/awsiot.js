@@ -22,7 +22,7 @@ module.exports = function (vTagAccess) {
 	  .on('connect', function() {
 	    //console.log('connect');
 	    device.subscribe('aws/things/mobilephone/shadow/update');
-	    device.publish('aws/things/mobilephone/shadow/update', JSON.stringify(vTagAccess));
+	    
 	    });
 
 	device
@@ -31,6 +31,7 @@ module.exports = function (vTagAccess) {
 	    return payload.toString();
 	  });
 
-
+	 device.publish('aws/things/mobilephone/shadow/update', JSON.stringify(vTagAccess));
+	 
 	return "AWS IOT Triggered";
 };
