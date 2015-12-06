@@ -63,7 +63,7 @@ app.get('/pindrop/:lat/:lng/:serial/:usrdt/:err', function (req, res) {
 	vTagAccess.lng = req.params.lng;
 	vTagAccess.serial = req.params.serial;
 	vTagAccess.usrdt = req.params.usrdt;
-	vTagAccess.err = req.params.err;
+	vTagAccess.msg = req.params.err;
 
 	//Asyncronized call to push Tag Access to AWS IOT
 	var awsiotResponse = awsiot_service(vTagAccess);
