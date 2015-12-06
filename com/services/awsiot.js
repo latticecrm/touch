@@ -20,14 +20,15 @@ module.exports = function (vTagAccess) {
 
 	device
 	  .on('connect', function() {
-	    console.log('connect');
+	    //console.log('connect');
 	    device.subscribe('aws/things/mobilephone/shadow/update');
 	    device.publish('aws/things/mobilephone/shadow/update', JSON.stringify(vTagAccess));
 	    });
 
 	device
 	  .on('message', function(topic, payload) {
-	    console.log('message', topic, payload.toString());
+	    //console.log('message', topic, payload.toString());
+	    return payload.toString();
 	  });
 
 
