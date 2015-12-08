@@ -76,38 +76,36 @@ app.get('/pindrop/:lat/:lng/:serial/:usrdt/:err', function (req, res) {
 		2 = Location, Serial number, Date and Like/Displike
 		3 = Location, Serial number, Date, Social Net details and Social Net Type
 	*/
-	// vTagAccess.Type = '1'
-	// vTagAccess.lat = req.params.lat;
-	// vTagAccess.lng = req.params.lng;
-	// vTagAccess.serial = req.params.serial;
-	// vTagAccess.usrdt = req.params.usrdt;
-	// vTagAccess.msg = req.params.err;
+	vTagAccess.Type = '1'
+	vTagAccess.lat = req.params.lat;
+	vTagAccess.lng = req.params.lng;
+	vTagAccess.serial = req.params.serial;
+	vTagAccess.usrdt = req.params.usrdt;
+	vTagAccess.msg = req.params.err;
 
-	// //Asyncronized call to push Tag Access to AWS IOT
-	// var awsiotResponse = awsiot_service(device, vTagAccess);
+	//Asyncronized call to push Tag Access to AWS IOT
+	var awsiotResponse = awsiot_service(device, vTagAccess);
 
-	// //asyncronized call to pull customer URL based on serial number
-	// var QueryString = query(vTagAccess, "Destination");
+	//asyncronized call to pull customer URL based on serial number
+	var QueryString = query(vTagAccess, "Destination");
 
-	// db.query(QueryString, function(err, result) {
- //            if(err) {
- //                res.redirect("/undermaintenance/1000/" + err);
- //            }
- //            else {
- //            	if(result) {
- //            		if(result.rows.length > 0) {
- //            			res.redirect(result.rows[0].destination);
- //            		} else {
- //            			res.redirect("/undermaintenance/1001/No Records Found");
- //            		}
- //            	} else {
- //            		res.redirect("/undermaintenance/1002/No Result Returned");
- //            	}
+	db.query(QueryString, function(err, result) {
+            if(err) {
+                res.send("/undermaintenance/1000/" + err);
+            }
+            else {
+            	if(result) {
+            		if(result.rows.length > 0) {
+            			res.send(result.rows[0].destination);
+            		} else {
+            			res.send("/undermaintenance/1001/No Records Found");
+            		}
+            	} else {
+            		res.send("/undermaintenance/1002/No Result Returned");
+            	}
                 
- //            }
- //        });
-
-res.send("http://www.google.com");
+            }
+        });
 
 	//response redirect to the customers URL
 	
