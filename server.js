@@ -27,6 +27,7 @@ var index_page = require('./com/views/index.js');
 var undermaintenance_page = require('./com/views/undermaintenance.js');
 var awsiot_service = require('./com/services/awsiot.js');
 var db = require('./com/services/db.js');
+var query = require('./com/tools/query.js');
 
 /*-----DECLARATIONS-----*/
 //Application Variables 
@@ -63,8 +64,7 @@ app.get('/:serial', function (req, res) {
 app.get('/pindrop/:lat/:lng/:serial/:usrdt/:err', function (req, res) {
 	//declare local variables
 	var vTagAccess = {};
-	var vCustomerURL = "";
-
+	
 	//validate the requests to eliminate attacks
 
 	
@@ -86,11 +86,28 @@ app.get('/pindrop/:lat/:lng/:serial/:usrdt/:err', function (req, res) {
 	var awsiotResponse = awsiot_service(device, vTagAccess);
 
 	//asyncronized call to pull customer URL based on serial number
+	var QueryString = query(vTagAccess, "Destination");
 
-	vCustomerURL = "http://www.google.com"; //Assign the customer url here...
+	db.query(QueryString, function(err, result) {
+            if(err) {
+                res.redirect("/undermaintenance/1000/" + err);
+            }
+            else {
+            	if(result) {
+            		if(result.rows.length > 0) {
+            			res.redirect(result.rows[0].destination);
+            		} else {
+            			res.redirect("/undermaintenance/1001/No Records Found");
+            		}
+            	} else {
+            		res.redirect("/undermaintenance/1002/No Result Returned");
+            	}
+                
+            }
+        });
 
 	//response redirect to the customers URL
-	res.send(vCustomerURL);
+	
 	
 });
 
@@ -104,15 +121,19 @@ app.get('/undermaintenance/:errorcode/:err', function (req, res) {
 	
 });
 
-app.get('/sqltest/:id', function(req,res) {
+app.get('/sqltest/:serialnumber', function(req,res) {
+
+	 var QueryString = 	"SELECT Destination, DestinationType FROM TouchDestinationList " + 
+						"WHERE ProductSerialAssociationID = ( " + 
+						"SELECT " + 
+						"	(CASE WHEN (SELECT COUNT(1) FROM ProductSerialAssociation WHERE StartSerialNumber <= '" + req.params.serialnumber + "' AND EndSerialNumber >= '" + req.params.serialnumber + "') > 0 THEN " + 
+						"	  (SELECT ProductSerialAssociationID FROM ProductSerialAssociation WHERE StartSerialNumber <= '" + req.params.serialnumber + "' AND EndSerialNumber >= '" + req.params.serialnumber + "') " + 
+						"	ELSE " + 
+						"		1 " + 
+						"	END))";
 
 
-	//db.query('SELECT * FROM Customer WHERE CustomerID = $1::int', ['1'], function(err, result) {
-    //db.query('SELECT * FROM Customer', function(err, result) {
-
-
-
-    db.query("SELECT * from Customer", function(err, result) {
+    db.query(QueryString, function(err, result) {
             //done();
             if(err) {
                 console.error('error running query', err);
