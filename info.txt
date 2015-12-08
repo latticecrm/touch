@@ -10,6 +10,8 @@ git add server.js
 git commit -m "my third check-in"
 eb deploy
 
+//beanstalk URL = http://appatouch.elasticbeanstalk.com/[serial number]
+
 ---to deploy to prod env---
 1. Commit your changes.
 git add .
