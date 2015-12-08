@@ -26,7 +26,7 @@ var awsIot = require('aws-iot-device-sdk');
 var index_page = require('./com/views/index.js');
 var undermaintenance_page = require('./com/views/undermaintenance.js');
 var awsiot_service = require('./com/services/awsiot.js');
-
+var db = require('./com/services/db.js');
 
 /*-----DECLARATIONS-----*/
 //Application Variables 
@@ -69,6 +69,13 @@ app.get('/pindrop/:lat/:lng/:serial/:usrdt/:err', function (req, res) {
 
 	
 	//push the body request post variables into the Tag Access Array Object
+	/*
+		Type:
+		1 = Only Location, Serial number and Date
+		2 = Location, Serial number, Date and Like/Displike
+		3 = Location, Serial number, Date, Social Net details and Social Net Type
+	*/
+	vTagAccess.Type = '1'
 	vTagAccess.lat = req.params.lat;
 	vTagAccess.lng = req.params.lng;
 	vTagAccess.serial = req.params.serial;
@@ -95,6 +102,24 @@ app.get('/undermaintenance/:errorcode/:err', function (req, res) {
 	//response redirect to the customers URL
 	res.send(vErrorResponseHtml);
 	
+});
+
+app.get('/sqltest/:id', function(req,res) {
+
+
+	//db.query('SELECT * FROM Customer WHERE CustomerID = $1::int', ['1'], function(err, result) {
+    //db.query('SELECT * FROM Customer', function(err, result) {
+
+
+
+    db.query("SELECT * from Customer", function(err, result) {
+            //done();
+            if(err) {
+                console.error('error running query', err);
+            }
+           res.send(result.rows);
+        });
+   
 });
 
 app.listen(PORT, function () {
