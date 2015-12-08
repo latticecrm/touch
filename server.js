@@ -107,7 +107,7 @@ app.get('/pindrop/:lat/:lng/:serial/:usrdt/:err', function (req, res) {
  //            }
  //        });
 
-res.redirect("http://www.google.com");
+res.send("http://www.google.com");
 
 	//response redirect to the customers URL
 	
