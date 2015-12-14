@@ -165,7 +165,7 @@ app.get('/pindrop/:lat/:lng/:serial/:usrdt/:err', function (req, res) {
     					db.query(DeviceExistsQuery, function(err2, result2) {
     						if(result2) {
     							if(result2.rows.length > 0) {
-    								vTagAccess.TouchDeviceID = result1.rows[0].touchdeviceid;
+    								vTagAccess.TouchDeviceID = result2.rows[0].touchdeviceid;
     							} else {
     								var DeviceInsertQuery = query(vTagAccess, "Insert Device");
 			    					db.query(DeviceInsertQuery);
