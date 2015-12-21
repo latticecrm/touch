@@ -21,6 +21,7 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var _= require("underscore");
 var awsIot = require('aws-iot-device-sdk');
+//var crypto = require('crypto');
 
 //local modules
 var index_page = require('./com/views/index.js');
@@ -29,6 +30,7 @@ var awsiot_service = require('./com/services/awsiot.js');
 var db = require('./com/services/db.js');
 var query = require('./com/tools/query.js');
 var toolbox = require('./com/tools/toolbox.js');
+//var appacrypto = require('./com/services/appacrypto.js');
 
 /*-----DECLARATIONS-----*/
 //Application Variables 
@@ -69,7 +71,10 @@ app.get('/pindrop/:lat/:lng/:serial/:usrdt/:err', function (req, res) {
 	
 	//validate the requests to eliminate attacks
 
-	
+	//Decrypt serial number
+	//var serialnumber = appacrypto(req.params.serial);
+	var serialnumber = req.params.serial;
+
 	//push the body request post variables into the Tag Access Array Object
 	/*
 		Type:
@@ -80,7 +85,8 @@ app.get('/pindrop/:lat/:lng/:serial/:usrdt/:err', function (req, res) {
 	vTagAccess.Type = '1'
 	vTagAccess.lat = req.params.lat;
 	vTagAccess.lng = req.params.lng;
-	vTagAccess.serial = req.params.serial;
+	//vTagAccess.serial = req.params.serial;
+	vTagAccess.serial = serialnumber;
 	vTagAccess.usrdt = req.params.usrdt;
 	vTagAccess.msg = req.params.err;
 	vTagAccess.Device = toolbox(req,"Device");
