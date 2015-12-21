@@ -60,12 +60,17 @@ app.get('/:serial', function (req, res) {
 	//open index page, this page will collect the location details and call pindrop
 	//res.send(index_page(req));
 	/////res.render("touch.html");
-	res.sendFile(__dirname + '/views/touch.html');
+	if(req.params.serial[0] === "1") {
+		res.sendFile(__dirname + '/views/touchlike.html');
+	} else {
+		res.sendFile(__dirname + '/views/touch.html');
+	}
+	
 });
 
 
 //LOCATION - GET METHOD FOR pindrop
-app.get('/pindrop/:lat/:lng/:serial/:usrdt/:err', function (req, res) {
+app.get('/pindrop/:lat/:lng/:serial/:like/:usrdt/:err', function (req, res) {
 	//declare local variables
 	var vTagAccess = {};
 	
@@ -82,7 +87,13 @@ app.get('/pindrop/:lat/:lng/:serial/:usrdt/:err', function (req, res) {
 		2 = Location, Serial number, Date and Like/Displike
 		3 = Location, Serial number, Date, Social Net details and Social Net Type
 	*/
-	vTagAccess.Type = '1'
+	if(req.params.like = 'NA') {
+		vTagAccess.Type = '1';
+	} else {
+		vTagAccess.Type = '2';
+		vTagAccess.Like = req.params.like;
+	}
+	
 	vTagAccess.lat = req.params.lat;
 	vTagAccess.lng = req.params.lng;
 	//vTagAccess.serial = req.params.serial;

@@ -3,6 +3,7 @@ var longitude = 0;
 var err = '';
 var currentURL = '';
 var formObj;
+var isLike = '';
 
 function getLocation() {
     try{
@@ -35,7 +36,7 @@ function callAppaPindropService(lat, lng, err) {
         var usrdt = getCurrentDateTime(); //Get current date time
         
         //open http connection
-        http.open("GET", appaServiceURL + lat + "/" + lng + "/" + serial + "/NA/" + usrdt + "/" + err, true);
+        http.open("GET", appaServiceURL + lat + "/" + lng + "/" + serial + "/" + isLike + "/" + usrdt + "/" + err, true);
 
         //state change callback function to capture the connection state change.  
         http.onreadystatechange = function() {
@@ -133,12 +134,23 @@ function showLocation(position) {
     callAppaPindropService(position.coords.latitude, position.coords.longitude, "NA");
 }
 
-if (navigator.geolocation) {
-    //Get the user location.
-    getLocation();
-} else {
-    //call Appamark Service Touch Service
-    callAppaPindropService(0, 0, "Not Supported");
-    
+
+
+function clickedMe(likeorunlike) {
+
+    if (likeorunlike) {
+        isLike = 'Like';
+    } else {
+        isLike = 'Unlike';
+    }
+
+    if (navigator.geolocation) {
+        //Get the user location.
+        getLocation();
+    } else {
+        //call Appamark Service Touch Service
+        callAppaPindropService(0, 0, "Not Supported");
+        
+    }
 }
 
