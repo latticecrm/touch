@@ -87,7 +87,7 @@ app.get('/pindrop/:lat/:lng/:serial/:like/:usrdt/:err', function (req, res) {
 		2 = Location, Serial number, Date and Like/Displike
 		3 = Location, Serial number, Date, Social Net details and Social Net Type
 	*/
-	if(req.params.like = 'NA') {
+	if(req.params.like === 'NA') {
 		vTagAccess.Type = '1';
 	} else {
 		vTagAccess.Type = '2';
