@@ -21,6 +21,7 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var _= require("underscore");
 var awsIot = require('aws-iot-device-sdk');
+var request = require('request');
 //var crypto = require('crypto');
 
 //local modules
@@ -36,6 +37,7 @@ var toolbox = require('./com/tools/toolbox.js');
 //Application Variables 
 var app = express();
 var PORT = process.env.PORT || 3000;
+var GoogleAPI_KEY = "AIzaSyAz_snMNBdAfra78lrm0XpLWt-YAE4fuSw";
 
 /*-----USES-----*/
 //page level use declarations
@@ -73,6 +75,8 @@ app.get('/:serial', function (req, res) {
 app.get('/pindrop/:lat/:lng/:serial/:like/:usrdt/:err', function (req, res) {
 	//declare local variables
 	var vTagAccess = {};
+	var street_number = '';
+	var street_name = '';
 	
 	//validate the requests to eliminate attacks
 
@@ -89,9 +93,16 @@ app.get('/pindrop/:lat/:lng/:serial/:like/:usrdt/:err', function (req, res) {
 	*/
 	if(req.params.like === 'NA') {
 		vTagAccess.Type = '1';
+		vTagAccess.TagLike = -1;
 	} else {
 		vTagAccess.Type = '2';
 		vTagAccess.Like = req.params.like;
+		if(req.params.like === 'Like' || req.params.like === 1) {
+			vTagAccess.TagLike = 1;
+		} else {
+			vTagAccess.TagLike = 0;
+		}
+		
 	}
 	
 	vTagAccess.lat = req.params.lat;
@@ -141,7 +152,6 @@ app.get('/pindrop/:lat/:lng/:serial/:like/:usrdt/:err', function (req, res) {
 	vTagAccess.Country = "";
 	vTagAccess.FacebookLike = -1;
 	vTagAccess.TwitterLike = -1;
-	vTagAccess.TagLike = -1;
 	vTagAccess.Instagram = "";
 
 
@@ -163,45 +173,80 @@ app.get('/pindrop/:lat/:lng/:serial/:like/:usrdt/:err', function (req, res) {
     			vTagAccess.PhoneNumber = -1;
     			vTagAccess.PhoneNON = "";
 
+    			//request google api to get the address based on lat and lng
+    			var GoogleApiAddress = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + vTagAccess.lat + "," + vTagAccess.lng + "&key=" + GoogleAPI_KEY + "";
     			
-    			//Query for touch tag
-    			var TagQuery = query(vTagAccess, "Tag");
-    			db.query(TagQuery, function(err1, result1) {
-    				
-    				if(result1){
-    					if(result1.rows.length > 0) {
-    						vTagAccess.TouchTagID = result1.rows[0].touchtagid;
-    					} else {
-    						//Insert into touchtag if it doesn't already exists
-    						var TagInsertQuery = query(vTagAccess, "Insert Tag");
-    						db.query(TagInsertQuery);
-    					}
-
-    					//Insert into the touch device if it don't exist
-    					var DeviceExistsQuery = query(vTagAccess, "Select Device");
-    					db.query(DeviceExistsQuery, function(err2, result2) {
-    						if(result2) {
-    							if(result2.rows.length > 0) {
-    								vTagAccess.TouchDeviceID = result2.rows[0].touchdeviceid;
-    							} else {
-    								var DeviceInsertQuery = query(vTagAccess, "Insert Device");
-			    					db.query(DeviceInsertQuery);
+    			request({
+						url: GoogleApiAddress,
+						json: true
+					}, function (error, response, body) {
+						if (error) {
+							vTagAccess.Address = "";
+							vTagAccess.AddressLine = "";
+							vTagAccess.City = "";
+							vTagAccess.State = "";
+							vTagAccess.ZipCode = "";
+							vTagAccess.Country = "";
+						} else {
+							vTagAccess.Address = body.results[0].formatted_address;
+							for(arrCount = 0; arrCount < body.results[0].address_components.length; arrCount++) {
+								if (body.results[0].address_components[arrCount].types[0].indexOf("street_number") > -1) {
+									street_number = body.results[0].address_components[arrCount].short_name;
+								} else if (body.results[0].address_components[arrCount].types[0].indexOf("route") > -1) {
+									street_name = body.results[0].address_components[arrCount].short_name;
+								} else if (body.results[0].address_components[arrCount].types[0].indexOf("locality") > -1) {
+									vTagAccess.City = body.results[0].address_components[arrCount].short_name;
+								} else if (body.results[0].address_components[arrCount].types[0].indexOf("administrative_area_level_1") > -1) {
+									vTagAccess.State = body.results[0].address_components[arrCount].short_name;
+								} else if (body.results[0].address_components[arrCount].types[0].indexOf("country") > -1) {
+									vTagAccess.Country = body.results[0].address_components[arrCount].short_name;
+								} else if (body.results[0].address_components[arrCount].types[0].indexOf("postal_code") > -1) {
+									vTagAccess.ZipCode = body.results[0].address_components[arrCount].short_name;
 								}
-    							
-		    					//Insert tag access 
-		    					var TagBaseInsertQuery = query(vTagAccess, "TagAccess Insert");
-		    					db.query(TagBaseInsertQuery);
+							}
+							vTagAccess.AddressLine = street_number + " " + street_name;
+						}
 
-		    					if(vTagAccess.Status === "SOLD") {
-		    						//Update Product Serial Destination List
-			    					var SetDestinationQuery = query(vTagAccess, "Set Destination");
-			    					db.query(SetDestinationQuery);
+						//Query for touch tag
+		    			var TagQuery = query(vTagAccess, "Tag");
+		    			db.query(TagQuery, function(err1, result1) {
+		    				
+		    				if(result1){
+		    					if(result1.rows.length > 0) {
+		    						vTagAccess.TouchTagID = result1.rows[0].touchtagid;
+		    					} else {
+		    						//Insert into touchtag if it doesn't already exists
+		    						var TagInsertQuery = query(vTagAccess, "Insert Tag");
+		    						db.query(TagInsertQuery);
 		    					}
-    						}
-    					});
-    					
-    				}
-    			});
+
+		    					//Insert into the touch device if it don't exist
+		    					var DeviceExistsQuery = query(vTagAccess, "Select Device");
+		    					db.query(DeviceExistsQuery, function(err2, result2) {
+		    						if(result2) {
+		    							if(result2.rows.length > 0) {
+		    								vTagAccess.TouchDeviceID = result2.rows[0].touchdeviceid;
+		    							} else {
+		    								var DeviceInsertQuery = query(vTagAccess, "Insert Device");
+					    					db.query(DeviceInsertQuery);
+										}
+		    							
+				    					//Insert tag access 
+				    					var TagBaseInsertQuery = query(vTagAccess, "TagAccess Insert");
+				    					db.query(TagBaseInsertQuery);
+
+				    					if(vTagAccess.Status === "SOLD") {
+				    						//Update Product Serial Destination List
+					    					var SetDestinationQuery = query(vTagAccess, "Set Destination");
+					    					db.query(SetDestinationQuery);
+				    					}
+		    						}
+		    					});
+		    					
+		    				}
+		    			});									
+
+					});
 
     		} 
     	} 
