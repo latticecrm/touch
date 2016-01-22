@@ -123,7 +123,7 @@ app.get('/pindrop/:lat/:lng/:serial/:like/:usrdt/:err', function (req, res) {
 	//asyncronized call to pull customer URL based on serial number
 	var QueryString = query(vTagAccess, "Destination");
 
-	db.query(QueryString, function(err, result) {
+	db.query(QueryString, [vTagAccess.usrdt, vTagAccess.serial],  function(err, result) {
         if(err) {
             res.send("/undermaintenance/1000/" + err);
         }
@@ -161,8 +161,7 @@ app.get('/pindrop/:lat/:lng/:serial/:like/:usrdt/:err', function (req, res) {
 
 	//Query for product serial
 	CustQuery = query(vTagAccess, "Product Serial");
-	db.query(CustQuery, function(err, result) {
-
+	db.query(CustQuery, [vTagAccess.serial], function(err, result) {
 		if(result) {
     		if(result.rows.length > 0) {
     			vTagAccess.ProductSerialAssociationID = result.rows[0].productserialassociationid;
@@ -187,7 +186,15 @@ app.get('/pindrop/:lat/:lng/:serial/:like/:usrdt/:err', function (req, res) {
 							vTagAccess.State = "";
 							vTagAccess.ZipCode = "";
 							vTagAccess.Country = "";
+						} else if (body.results.length === 0) {
+							vTagAccess.Address = "";
+							vTagAccess.AddressLine = "";
+							vTagAccess.City = "";
+							vTagAccess.State = "";
+							vTagAccess.ZipCode = "";
+							vTagAccess.Country = "";
 						} else {
+							//////console.log(body.results.length);
 							vTagAccess.Address = body.results[0].formatted_address;
 							for(arrCount = 0; arrCount < body.results[0].address_components.length; arrCount++) {
 								if (body.results[0].address_components[arrCount].types[0].indexOf("street_number") > -1) {
@@ -209,7 +216,7 @@ app.get('/pindrop/:lat/:lng/:serial/:like/:usrdt/:err', function (req, res) {
 
 						//Query for touch tag
 		    			var TagQuery = query(vTagAccess, "Tag");
-		    			db.query(TagQuery, function(err1, result1) {
+		    			db.query(TagQuery, [vTagAccess.serial, vTagAccess.CustomerID, vTagAccess.ProductID], function(err1, result1) {
 		    				
 		    				if(result1){
 		    					if(result1.rows.length > 0) {
@@ -217,28 +224,49 @@ app.get('/pindrop/:lat/:lng/:serial/:like/:usrdt/:err', function (req, res) {
 		    					} else {
 		    						//Insert into touchtag if it doesn't already exists
 		    						var TagInsertQuery = query(vTagAccess, "Insert Tag");
-		    						db.query(TagInsertQuery);
+		    						db.query(TagInsertQuery, [vTagAccess.serial, vTagAccess.CustomerID, vTagAccess.ProductID, vTagAccess.Status]);
 		    					}
 
 		    					//Insert into the touch device if it don't exist
 		    					var DeviceExistsQuery = query(vTagAccess, "Select Device");
-		    					db.query(DeviceExistsQuery, function(err2, result2) {
+		    					db.query(DeviceExistsQuery, [vTagAccess.Device, vTagAccess.PhoneNumber], function(err2, result2) {
 		    						if(result2) {
 		    							if(result2.rows.length > 0) {
 		    								vTagAccess.TouchDeviceID = result2.rows[0].touchdeviceid;
 		    							} else {
 		    								var DeviceInsertQuery = query(vTagAccess, "Insert Device");
-					    					db.query(DeviceInsertQuery);
+					    					db.query(DeviceInsertQuery, [vTagAccess.Device, vTagAccess.PhoneNumber]);
 										}
 		    							
 				    					//Insert tag access 
 				    					var TagBaseInsertQuery = query(vTagAccess, "TagAccess Insert");
-				    					db.query(TagBaseInsertQuery);
+				    					db.query(TagBaseInsertQuery, [
+				    						vTagAccess.Device,
+				    						vTagAccess.PhoneNumber,
+				    						vTagAccess.ProductSerialAssociationID,
+				    						vTagAccess.serial,
+				    						vTagAccess.CustomerID,
+				    						vTagAccess.ProductID,
+				    						vTagAccess.PhoneNON,
+				    						vTagAccess.Address,
+				    						vTagAccess.lat,
+				    						vTagAccess.lng,
+				    						vTagAccess.PhoneDetails,
+				    						vTagAccess.AddressLine,
+				    						vTagAccess.City,
+				    						vTagAccess.State,
+				    						vTagAccess.ZipCode,
+				    						vTagAccess.Country,
+				    						vTagAccess.FacebookLike,
+				    						vTagAccess.TwitterLike,
+				    						vTagAccess.Instagram,
+				    						vTagAccess.TagLike
+				    						]);
 
 				    					if(vTagAccess.Status === "SOLD") {
 				    						//Update Product Serial Destination List
 					    					var SetDestinationQuery = query(vTagAccess, "Set Destination");
-					    					db.query(SetDestinationQuery);
+					    					db.query(SetDestinationQuery, [vTagAccess.usrdt, vTagAccess.serial]);
 				    					}
 		    						}
 		    					});
@@ -275,14 +303,14 @@ app.get('/sqltest/:serialnumber', function(req,res) {
 	 var QueryString = 	"SELECT Destination, DestinationType FROM TouchDestinationList " + 
 						"WHERE ProductSerialAssociationID = ( " + 
 						"SELECT " + 
-						"	(CASE WHEN (SELECT COUNT(1) FROM ProductSerialAssociation WHERE StartSerialNumber <= '" + req.params.serialnumber + "' AND EndSerialNumber >= '" + req.params.serialnumber + "') > 0 THEN " + 
-						"	  (SELECT ProductSerialAssociationID FROM ProductSerialAssociation WHERE StartSerialNumber <= '" + req.params.serialnumber + "' AND EndSerialNumber >= '" + req.params.serialnumber + "') " + 
+						"	(CASE WHEN (SELECT COUNT(1) FROM ProductSerialAssociation WHERE StartSerialNumber <= $1 AND EndSerialNumber >= $1) > 0 THEN " + 
+						"	  (SELECT ProductSerialAssociationID FROM ProductSerialAssociation WHERE StartSerialNumber <= $1 AND EndSerialNumber >= $1) " + 
 						"	ELSE " + 
 						"		1 " + 
 						"	END))";
 
 
-    db.query(QueryString, function(err, result) {
+    db.query(QueryString, [req.params.serialnumber], function(err, result) {
             //done();
             if(err) {
                 console.error('error running query', err);
