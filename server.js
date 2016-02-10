@@ -55,6 +55,28 @@ var device = awsIot.device({
 	    region: 'us-east-1'
 	});
 
+/**----GET ALL Products go to LIKE PAGE----*/
+var vProductsWithLikeFlag = [];
+var emptyData = {};
+var DefaultQueryString = query(emptyData, "ProductWithLikeFlag");
+
+db.query(DefaultQueryString, function(err, result) {
+    if(result) {
+		if(result.rows.length > 0) {
+			vProductsWithLikeFlag = result.rows;
+		} 
+	} 
+});
+
+/**This function is called to verify if the current product require a like page or not**/
+function inLikeFlagProduct( needle ) {
+   for (i in vProductsWithLikeFlag) {
+       if (vProductsWithLikeFlag[i].productidentitynumber == needle) return true;
+   }
+   return false;
+}
+
+
 /*-----REQUESTS, RESPONSES AND FUNCTIONS-----*/
 //ROOT - GET METHOD
 app.get('/:serial', function (req, res) {
@@ -62,7 +84,8 @@ app.get('/:serial', function (req, res) {
 	//open index page, this page will collect the location details and call pindrop
 	//res.send(index_page(req));
 	/////res.render("touch.html");
-	if(req.params.serial[0] === "1") {
+	//////if(req.params.serial[0] === "1") {
+	if(inLikeFlagProduct(req.params.serial.substring(4, 8))) {
 		res.sendFile(__dirname + '/views/touchlike.html');
 	} else {
 		res.sendFile(__dirname + '/views/touch.html');

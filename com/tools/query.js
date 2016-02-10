@@ -58,6 +58,8 @@ module.exports = function (data, type) {
 				"(SELECT Top 1 CustomerIdentityNumber FROM Customer WHERE CustomerID=$5) as CustomerIdentityNumber," +
 				"$8,$9,$10,GetDate(),$11,$12,$13,$14,$15,$16,$17,$18,$19,$20" + 
 			";"
+	} if (type === "ProductWithLikeFlag") {	
+		return "SELECT productidentitynumber FROM Product WHERE specialaction = 'Like'"
 	} else {
 		return "";
 	}
