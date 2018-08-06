@@ -1,11 +1,10 @@
 branch-defaults:
   master:
-    environment: appatouch-dev
-    group_suffix: null
+    environment: Touchtap-env-1
 global:
-  application_name: appatouch
+  application_name: touchtap
   default_ec2_keyname: null
-  default_platform: Node.js
-  default_region: us-east-1
-  profile: null
+  default_platform: 64bit Amazon Linux 2018.03 v4.5.1 running Node.js
+  default_region: us-west-2
+  profile: eb-cli
   sc: git

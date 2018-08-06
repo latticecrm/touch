@@ -20,7 +20,7 @@ Version | When | Who | What :
 var express = require("express");
 var bodyParser = require("body-parser");
 var _= require("underscore");
-var awsIot = require('aws-iot-device-sdk');
+//var awsIot = require('aws-iot-device-sdk');
 var request = require('request');
 //var crypto = require('crypto');
 
@@ -47,14 +47,14 @@ app.use(express.static(__dirname + '/views')); //Store all HTML files in view fo
 app.use(express.static(__dirname + '/awsCerts')); //AWS Certificates.
 
 /**-----CONNECT TO AWS IOT-----**/
-var device = awsIot.device({
+/*var device = awsIot.device({
 	   keyPath: './awsCerts/thing-private-key.pem',
 	  certPath: './awsCerts/cert.pem',
 	    caPath: './awsCerts/rootCA.pem',
 	  clientId: 'AppamarkTouch',
 	    region: 'us-east-1'
 	});
-
+*/
 /**----GET ALL Products go to LIKE PAGE----*/
 var vProductsWithLikeFlag = [];
 var emptyData = {};
@@ -138,7 +138,7 @@ app.get('/pindrop/:lat/:lng/:serial/:like/:usrdt/:err', function (req, res) {
 
 	
 	//Asyncronized call to push Tag Access to AWS IOT
-	var awsiotResponse = awsiot_service(device, vTagAccess);
+	//var awsiotResponse = awsiot_service(device, vTagAccess);
 
 	//connect to Redshift
 	//db.connect();

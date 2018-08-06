@@ -1,3 +1,10 @@
+npm init
+npm start
+npm install npm
+
+node server.js (to start local to check errors etc...)
+------------
+
 eb setup
 https://medium.freecodecamp.org/how-to-deploy-a-node-js-app-to-the-aws-elastic-beanstalk-f150899ed977
 
