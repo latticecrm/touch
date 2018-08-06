@@ -37,8 +37,8 @@ var toolbox = require('./com/tools/toolbox.js');
 //Application Variables 
 var app = express();
 var PORT = process.env.PORT || 3000;
-var GoogleAPI_KEY = "AIzaSyAz_snMNBdAfra78lrm0XpLWt-YAE4fuSw";
-
+//var GoogleAPI_KEY = "AIzaSyAz_snMNBdAfra78lrm0XpLWt-YAE4fuSw";
+var GoogleAPI_KEY = "AIzaSyDZiIFBVgLx918QyMuO_x-XMAOy7ksNqkM";
 /*-----USES-----*/
 //page level use declarations
 app.use(bodyParser.json()); //body-parser 
