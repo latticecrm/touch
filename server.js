@@ -1,13 +1,13 @@
 /********************************************************************************************************************************************
 ---------------------------------------------------------------------------------------------------------------------------------------------
-Company: Appamark Touch 
+Company: Lattice Touch 
 File: server.js
 Description: 
 NodeJS Starting Point Server.  
 Hosts URL Service information.  
-Appamark Touch products main landing file.
+Touch products main landing file.
 Web page/service configurations are done here. 
-FYI -- appatouch is deployed to AWS Beanstalk and Heroku
+FYI -- touch is deployed to AWS Beanstalk and Heroku
 ---------------------------------------------------------------------------------------------------------------------------------------------
 
 -------------Update Log----------------------------------------------------------------------------------------------------------------------
@@ -344,5 +344,5 @@ app.get('/sqltest/:serialnumber', function(req,res) {
 });
 
 app.listen(PORT, function () {
-	console.log("AppaTouch Express server started on " + PORT + " !!!");
+	console.log("Touch Express server started on " + PORT + " !!!");
 });
