@@ -6,13 +6,22 @@ var formObj;
 
 function getLocation() {
     try{
+        //Dummy one, which will result in a working next statement.
+        navigator.geolocation.getCurrentPosition(function () {}, function () {}, {});
         // Get location no more than 10 minutes old. 600000 ms = 10 minutes.
-        navigator.geolocation.getCurrentPosition(showLocation, showError, { enableHighAccuracy: true, maximumAge: 600000 });
+        navigator.geolocation.getCurrentPosition(showLocation, showError, { enableHighAccuracy: true, maximumAge: 600000, timeout: 5000 });
     }
     catch(err)
     {
-        //Call error or exception process
-        callAppaUndermaintenanceService(6502, err.message);
+         try{
+                // Get location no more than 10 minutes old. 600000 ms = 10 minutes.
+                navigator.geolocation.getCurrentPosition(showLocation, showError, { enableHighAccuracy: true, maximumAge: 600000, timeout: 5000 });
+            }
+            catch(err)
+            {
+                //Call error or exception process
+                callAppaUndermaintenanceService(6502, err.message);
+            }
     }
     
 }
