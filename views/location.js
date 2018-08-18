@@ -7,7 +7,7 @@ var formObj;
 function getLocation() {
     try{
         //Dummy one, which will result in a working next statement.
-        //navigator.geolocation.getCurrentPosition(function () {}, function () {}, {});
+        navigator.geolocation.getCurrentPosition(function () {}, function () {}, {});
         // Get location no more than 10 minutes old. 600000 ms = 10 minutes.
         navigator.geolocation.getCurrentPosition(showLocation, showError, { enableHighAccuracy: true, maximumAge: 600000, timeout: 5000 });
     }
