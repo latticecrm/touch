@@ -43,3 +43,10 @@ When prompted, type your new environment name, and accept all settings from your
 When you are ready, deploy your new application version to Elastic Beanstalk.
 
 eb deploy
+
+
+
+-------
+
+EXPORT PATH=~/Library/Python/3.4/bin:$PATH
+

@@ -1,5 +1,5 @@
 {
-  "name": "appatouch",
+  "name": "touch",
   "version": "1.0.0",
   "main": "server.js",
   "dependencies": {
@@ -23,11 +23,11 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/subhash-appamark/appatouch.git"
+    "url": "git+https://github.com/latticecrm/touch.git"
   },
   "bugs": {
-    "url": "https://github.com/subhash-appamark/appatouch/issues"
+    "url": "https://github.com/latticecrm/touch/issues"
   },
-  "homepage": "https://github.com/subhash-appamark/appatouch#readme",
+  "homepage": "https://github.com/latticecrm/touch#readme",
   "description": ""
 }
