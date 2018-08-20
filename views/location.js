@@ -7,7 +7,7 @@ var formObj;
 function getLocation() {
     try{
         //Dummy one, which will result in a working next statement.
-        //navigator.geolocation.getCurrentPosition(function () {}, function () {}, {});
+        //navigator.geolocation.getCurrentPosition(function () {}, function () {}, {timeout: 5000});
         // Get location no more than 10 minutes old. 600000 ms = 10 minutes.
         //navigator.geolocation.getCurrentPosition(showLocation, showError, { enableHighAccuracy: true, maximumAge: 600000, timeout: 5000 });
         navigator.geolocation.getCurrentPosition(showLocation, showError, { maximumAge: 600000, timeout: 5000 });
@@ -89,7 +89,16 @@ function showError(error) {
         }
 
         //call Appamark Service Touch Service
-        callAppaPindropService(position.coords.latitude, position.coords.longitude, err);
+        if (position) {
+            if(position.coords) {
+                callAppaPindropService(position.coords.latitude, position.coords.longitude, err);
+            } else {
+                callAppaPindropService(0, 0, "");
+            }
+        } else {
+            callAppaPindropService(0, 0, "");
+        }
+
 
    }
    catch (err) {

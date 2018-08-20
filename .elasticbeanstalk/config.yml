@@ -1,10 +1,18 @@
 branch-defaults:
   master:
     environment: Touchtap-env-1
+environment-defaults:
+  Touchtap-env-1:
+    branch: null
+    repository: null
 global:
   application_name: touchtap
   default_ec2_keyname: null
   default_platform: 64bit Amazon Linux 2018.03 v4.5.1 running Node.js
   default_region: us-west-2
+  instance_profile: null
+  platform_name: null
+  platform_version: null
   profile: eb-cli
   sc: git
+  workspace_type: Application
