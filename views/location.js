@@ -89,8 +89,8 @@ function showError(error) {
         }
 
         //call Appamark Service Touch Service
-        if (position) {
-            if(position.coords) {
+        if (position != undefined) {
+            if(position.coords != undefined) {
                 callAppaPindropService(position.coords.latitude, position.coords.longitude, err);
             } else {
                 callAppaPindropService(0, 0, "");
